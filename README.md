@@ -1,7 +1,7 @@
 # BREVIS-SEMITA (Short Path)
-This tool is used for finding the shortest pathway in space. The tool utilizes emergent behavior from entities that communicate via chemoreception and operate on a rule-set reflective of their collective goal. 
+This tool is used for finding the shortest pathway between a set of points in space. The tool utilizes emergent behavior from entities that communicate via chemoreception and operate on a rule-set reflective of their collective goal. 
 
-The codebase utilizes Numpy to for the data structures and manipulation. The goal is to keep utlizise the data structures developed in alpha and alter the codebase's Numpy based functions to operate with Arrayfire.
+The codebase utilizes Numpy for the data structures and manipulation. The goal is to keep utlizise the data structures developed with Numpy and alter the codebase's Numpy based functions to operate with Arrayfire for parallelization.
 
 ## Installation
 There are no installation methods other than installing the libraries used:

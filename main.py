@@ -1,14 +1,22 @@
-import arrayfire as af
-import multiprocessing as mp
+import Simulation
 
-## Initalize GPU
+## Initialize simulation
+# Configure resolution
+X_RESOLUTION = 64
+Y_RESOLUTION = 64
 
-## Initalize Space
+Simulation.configureSpace(X_RESOLUTION, Y_RESOLUTION)
 
-## Initalize Points
+# Configure update frequency
 
-## Configure Visualization
+# Configure Points in the space
 
-## Initalize Ants
+# Configure non-complex entity logic
 
-## Start Simulation with a loop running simulation space logic and ant logic
+# Configure entities in the space
+
+# Configure the amount of simulations to be ran
+
+# Configure the visualization(s)
+
+# Start simulation loop

@@ -1,31 +1,37 @@
 import numpy as np
-import Space
+import Simulation
 
 def __init__(self, id):
     id = np.ushort(id)
-    # Surroundings hold the likeliness for the ant to go a certian direction.
-    likelinessInput = np.array([0,0,0,0,0,0], dtype=np.single)
+    # Surroundings hold the likeliness for the ant to go a certain direction.
+    likelinessInput = np.array([0,0,0,0,0,0], dtype=np.single) # TODO: change to 2x3 matrix
+    
+    # TODO: Function to update the likelinessInput and send to Simulation for the instance
+
 
 # Function for fetching data
-    def getSurroundings():
-        allSurroundings = Space.getSegment()
-        
+def getSurroundings():
+    allSurroundings = Simulation.getSegment()
+    # TODO: Trim down surroundings to fit the 2x3
+    # return trimmedSurroundings
 
-# Properties for determining likeliness
+
+## Properties for determining likeliness
+    
+# Temporal Tracking to assist in algorithms
+
 # anti-aliasing movement
 
+# Promote hitting all the points
 
+# Promote following of pheromones
 
-## Configure Intelligence
+# Promote Divergence if not all points are hit
 
-## Promote hitting all the points
+# Change Direction if there is a wall
 
-## Promote following of pheremones
+#? Express Movement as a unit vector of likeliness
 
-## Promote Divergence if not all points are hit
+# Alter behavior depending on altered movement
 
-## Change Direction if there is a wall
-
-## Express Movement as a unit vector of likeliness
-
-## Conduct Movement
+## Send likeliness to simulation

@@ -14,20 +14,25 @@ There are no instructions for running, this project is incomplete, but actively 
 ## File Structure
 The file structure depicts this codebase as an application, not a library. This will be changed promptly.
 
+### main.py:
+- Configure the program.
+- Run the simulation loop.
+
 ### Ant.py:
-- Fetches spatial data from Simulation.py
-- Short term temporal tracking
-- Sends movement data to Simulation.py to move itself
+- Fetches spatial data from Simulation.py.
+- Short term temporal tracking.
+- Sends movement data to Simulation.py to move itself.
 
 ### Simulation.py:
-- Allocates simulation space
+- Allocates the simulation space.
 - Holds data about entities without complex behavior (Pheromones, Roads, etc.)
 - Handles raw space data for entities (Ant.py).
 - Moves entities based on their likeliness to move. 
 
-### Main.py:
-- Configure the program
-- Run the simulation loop
+### Points.py
+- Parses points from a file.
+- Generates a list of points from an argmument.
+- Generates a list of random points.
 
 ## Current Development Goals
 - Restructure current code to easily configure in main

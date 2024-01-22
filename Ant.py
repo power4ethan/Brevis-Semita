@@ -4,7 +4,7 @@ import Simulation
 def __init__(self, id):
     id = np.ushort(id)
     # Surroundings hold the likeliness for the ant to go a certain direction.
-    likelinessInput = np.array([0,0,0,0,0,0], dtype=np.single) # TODO: change to 2x3 matrix
+    likelinessInput = np.zeros((2,3), dtype=np.single) # TODO: change to 2x3 matrix
     
     # TODO: Function to update the likelinessInput and send to Simulation for the instance
 

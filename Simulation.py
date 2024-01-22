@@ -2,6 +2,7 @@ import numpy as np
 import Ant
 
 ## Create High Def Space
+# X and Y are shifted up and to the right by 1 due to boarders
 space = None
 def configureSpace(X_RESOLUTION, Y_RESOLUTION):
     # Dimensions with a mask to prevent edge cases within space
@@ -17,18 +18,40 @@ def configureSpace(X_RESOLUTION, Y_RESOLUTION):
 
 ## Generate Ant List
 antIDs = None
+
 def configureAnts(ANT_AMOUNT):
     # List of ants with their id, x, y, and angle
     # ID | X | Y | Counterclockwise Rotation factor (0-3)
     antSpaceDataType = np.dtype([('id', np.ushort),('x', np.ushort),('y', np.ushort),('rotate', np.ubyte)])
     antIDs = np.zeros((ANT_AMOUNT,), dtype=antSpaceDataType)
+
+    # Populate id column
+    for i in range(len(antIDs)):
+        antIDs[i]['id'] = i
+
+    # TODO: Use Ant Space/Orientation function
+    
     return antIDs
+
 #---------------------------------------------------------------------------------------------
 
 
-
 ### List of Points with their id, x, and y
-## TODO: Implement a function that takes a list of x, y points
+pointIDs = None
+
+def configurePoints(pointFunction):
+    # List of points with their id, x, and y
+    # ID | X | Y
+    pointSpaceDataType = np.dtype([('id', np.ushort), ('x', np.ushort), ('y', np.ushort)])
+    pointIDs = np.zeros((len(pointFunction),), dtype=pointSpaceDataType)
+    
+    # Populate id column
+    for i in range(len(pointFunction)):
+        pointIDs[i]['id'] = i
+    
+    return pointIDs
+
+## TODO: Implement a function that takes a np.dtype of x, y points
 ## TODO: Implement data type
 
 ### Initialization of Ant Space and Orientation

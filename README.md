@@ -29,7 +29,7 @@ The file structure depicts this codebase as an application, not a library. This 
 - Configure the program
 - Run the simulation loop
 
-## Development Status
+## Current Development Goals
 - Restructure current code to easily configure in main
 - make the current structures more configurable/flexible
 - Create data structures with Numpy

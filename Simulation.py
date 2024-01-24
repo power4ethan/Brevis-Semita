@@ -18,7 +18,6 @@ def configureSpace(X_RESOLUTION, Y_RESOLUTION):
 
 ## Generate Ant List
 antIDs = None
-
 def configureAnts(ANT_AMOUNT):
     # List of ants with their id, x, y, and angle
     # ID | X | Y | Counterclockwise Rotation factor (0-3)
@@ -26,8 +25,7 @@ def configureAnts(ANT_AMOUNT):
     antIDs = np.zeros((ANT_AMOUNT,), dtype=antSpaceDataType)
 
     # Populate id column
-    for i in range(len(antIDs)):
-        antIDs[i]['id'] = i
+    antIDs['id'] = np.arange(ANT_AMOUNT)
 
     # TODO: Use Ant Space/Orientation function
     
@@ -38,7 +36,6 @@ def configureAnts(ANT_AMOUNT):
 
 ### List of Points with their id, x, and y
 pointIDs = None
-
 def configurePoints(pointFunction):
     # List of points with their id, x, and y
     # ID | X | Y
@@ -46,13 +43,14 @@ def configurePoints(pointFunction):
     pointIDs = np.zeros((len(pointFunction),), dtype=pointSpaceDataType)
     
     # Populate id column
-    for i in range(len(pointFunction)):
-        pointIDs[i]['id'] = i
+    pointIDs['id'] = np.arange(len(pointFunction))
     
+    # Populate the X and Y
+    pointIDs['x'] = pointFunction[:, 0]
+    pointIDs['y'] = pointFunction[:, 1]
     return pointIDs
+#---------------------------------------------------------------------------------------------
 
-## TODO: Implement a function that takes a np.dtype of x, y points
-## TODO: Implement data type
 
 ### Initialization of Ant Space and Orientation
 ## TODO: Think this out.

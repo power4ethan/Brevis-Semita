@@ -5,14 +5,31 @@ import Ant
 # X and Y are shifted up and to the right by 1 due to boarders
 space = None
 def configureSpace(X_RESOLUTION, Y_RESOLUTION):
+    ## TODO: This is ugly, fix
+
     # Dimensions with a mask to prevent edge cases within space
-    spaceWithBoarder = np.zeros((3, X_RESOLUTION + 2, Y_RESOLUTION + 2), dtype=np.single) 
-    # Mask and Configuration to use for data fetching
-    space = np.zeros_like(spaceWithBoarder, dtype=bool)
-    space[:, 0, :] = True  # First in y
-    space[:, -1, :] = True  # Last in y
-    space[:, :, 0] = True  # First in x
-    space[:, :, -1] = True  # Last in x
+    # Holds Pheromones, Ants, and Points
+    antSpace = np.zeros((X_RESOLUTION + 2, Y_RESOLUTION + 2), dtype=np.ushort) # Holds id of ant
+    pointSpace = np.zeros((X_RESOLUTION + 2, Y_RESOLUTION + 2), dtype=np.ushort) # Holds id of point
+    pheromoneSpace = np.zeros((X_RESOLUTION + 2, Y_RESOLUTION + 2), dtype=np.single) # Holds strength of pheromone
+    
+    # Masking
+    antSpace[0, :] = True
+    antSpace[-1, :] = True
+    pointSpace[0, :] = True
+    pointSpace[-1, :] = True
+    pheromoneSpace[0, :] = True
+    pheromoneSpace[-1, :] = True
+    antSpace[:, 0] = True
+    antSpace[:, -1] = True
+    pointSpace[:, 0] = True
+    pointSpace[:, -1] = True
+    pheromoneSpace[:, 0] = True
+    pheromoneSpace[:, -1] = True
+
+    # Embed results to space
+    space = {'antSpace': antSpace, 'pointSpace': pointSpace, 'pheromoneSpace': pheromoneSpace}
+
     return space
 #---------------------------------------------------------------------------------------------
 
@@ -25,10 +42,11 @@ def configureAnts(ANT_AMOUNT):
     antIDs = np.zeros((ANT_AMOUNT,), dtype=antSpaceDataType)
 
     # Populate id column
-    antIDs['id'] = np.arange(ANT_AMOUNT)
+    antIDs['id'] = np.arange(ANT_AMOUNT, dtype=np.ushort)
 
-    # TODO: Use Ant Space/Orientation function
-    
+    # Use Ant Space/Orientation function
+    randomAnts()
+
     return antIDs
 
 #---------------------------------------------------------------------------------------------
@@ -53,7 +71,10 @@ def configurePoints(pointFunction):
 
 
 ### Initialization of Ant Space and Orientation
-## TODO: Think this out.
+def randomAnts():
+    antIDs['x'] = np.random.randint(1,space.shape[1] - 1, len(antIDs), dtype=np.ushort)
+    antIDs['y'] = np.random.randint(1, space.shape[2] - 1, len(antIDs), dtype=np.ushort)
+    antIDs['rotate'] = np.random.randint(0,4,len(antIDs), dtype=np.ubyte)
 
 
 ### Timing
@@ -64,6 +85,7 @@ def configureTime(ANT_REFRESH, PHEROMONE_REFRESH):
     ANT_REFRESH = ANT_REFRESH
     PHEROMONE_REFRESH = PHEROMONE_REFRESH
 
+## TODO: Update ant id in the space
 
 ### Pheromone Dissipation Logic
 ## TODO: Implement various algorithms for pheromone dissipation

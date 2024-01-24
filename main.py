@@ -16,7 +16,9 @@ POINT_AMOUNT = 6
 Simulation.configurePoints(Points.randPoints(POINT_AMOUNT))
 
 # Configure update frequency
-
+ANT_REFRESH       = 1
+PHEROMONE_REFRESH = 2
+Simulation.configureTime()
 
 # Configure non-complex entity logic
 

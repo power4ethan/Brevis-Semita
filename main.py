@@ -16,12 +16,11 @@ POINT_AMOUNT = 6
 Simulation.configurePoints(Points.randPoints(POINT_AMOUNT))
 
 # Configure update frequency
-ANT_REFRESH       = 1
-PHEROMONE_REFRESH = 2
+ANT_REFRESH       = 30
+PHEROMONE_REFRESH = 60
 Simulation.configureTime()
 
-# Configure non-complex entity logic
-
+# Configure entity behavior/logic functions
 
 
 # Configure the amount of simulations to be ran
@@ -29,3 +28,9 @@ Simulation.configureTime()
 # Configure the visualization(s)
 
 # Start simulation loop
+    # Load ants from antIDs into space
+    # All ants fetch surroundings
+    # Pheromone dissipation logic is applied to all cells (can be done while ants compute on separate thread)
+    # All ants compute, and send likeliness to the simulation 
+    # Simulation add pheromones on their previous location (already loaded in space) in space based on likeliness (This could be changed)
+    # once antIDs is completely done updating, ants in space are cleared

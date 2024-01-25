@@ -5,7 +5,7 @@ import Ant
 # X and Y are shifted up and to the right by 1 due to boarders
 space = None
 def configureSpace(X_RESOLUTION, Y_RESOLUTION):
-    ## TODO: This is ugly, fix
+    ## TODO: Add ability to add layers with configurable dtypes to allow for roads
 
     # Dimensions with a mask to prevent edge cases within space
     # Holds Pheromones, Ants, and Points
@@ -14,24 +14,21 @@ def configureSpace(X_RESOLUTION, Y_RESOLUTION):
     pheromoneSpace = np.zeros((X_RESOLUTION + 2, Y_RESOLUTION + 2), dtype=np.single) # Holds strength of pheromone
     
     # Masking
-    antSpace[0, :] = True
-    antSpace[-1, :] = True
-    pointSpace[0, :] = True
-    pointSpace[-1, :] = True
-    pheromoneSpace[0, :] = True
-    pheromoneSpace[-1, :] = True
-    antSpace[:, 0] = True
-    antSpace[:, -1] = True
-    pointSpace[:, 0] = True
-    pointSpace[:, -1] = True
-    pheromoneSpace[:, 0] = True
-    pheromoneSpace[:, -1] = True
-
+    def maskBoarders(xySpace):
+        xySpace[0, :] = True
+        xySpace[-1, :] = True
+        xySpace[:, 0] = True
+        xySpace[:, -1] = True
+    maskBoarders(antSpace)
+    maskBoarders(pointSpace)
+    maskBoarders(pheromoneSpace)
+    
     # Embed results to space
     space = {'antSpace': antSpace, 'pointSpace': pointSpace, 'pheromoneSpace': pheromoneSpace}
 
     return space
 #---------------------------------------------------------------------------------------------
+
 
 ## Generate Ant List
 antIDs = None
@@ -85,10 +82,32 @@ def configureTime(ANT_REFRESH, PHEROMONE_REFRESH):
     ANT_REFRESH = ANT_REFRESH
     PHEROMONE_REFRESH = PHEROMONE_REFRESH
 
-## TODO: Update ant id in the space
+## TODO: Update antIDs data in the space
+def loadAnts():
+    # Clear all ants in the space
+    # Load all ants in the space
+    return None
+
+## TODO: Update pointIDs data in the space
+def loadPoints():
+    # Clear all points in the space
+    # Load all points in the space
+    return None
+
+## TODO: Update pheromone data in the space using a define algorithm function as input
+## TODO: Create a buffer for pheromone updates
+
 
 ### Pheromone Dissipation Logic
 ## TODO: Implement various algorithms for pheromone dissipation
+def linearFade():
+    return None
+
+def exponentialFade():
+    return None
+
+def powerLawFade(): # Still learning about Power Law, may be useful?
+    return None
 
 ## Road Generation
 ## TODO: Add Objects that block and/or can alter movement properties of the ants; akin to roads and buildings.

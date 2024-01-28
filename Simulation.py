@@ -84,14 +84,20 @@ def configureTime(ANT_REFRESH, PHEROMONE_REFRESH):
 
 ## TODO: Update antIDs data in the space
 def loadAnts():
-    # Clear all ants in the space
-    # Load all ants in the space
+    space['antSpace'] = np.zeros_like(space['antSpace'])
+    
+    for ant in antIDs:
+        x, y = ant['x'], ant['y']
+        space['antSpace'][x + 1, y + 1] = ant['id']
     return None
 
 ## TODO: Update pointIDs data in the space
 def loadPoints():
-    # Clear all points in the space
-    # Load all points in the space
+    space['pointSpace'] = np.zeros_like(space['pointSpace'])
+    
+    for points in pointIDs:
+        x, y = points['x'], points['y']
+        space['pointSpace'][x + 1, y + 1] = points['id']
     return None
 
 ## TODO: Update pheromone data in the space using a define algorithm function as input

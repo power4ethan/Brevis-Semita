@@ -94,7 +94,7 @@ def loadAnts():
 ## TODO: Update pointIDs data in the space
 def loadPoints():
     space['pointSpace'] = np.zeros_like(space['pointSpace'])
-    
+
     for points in pointIDs:
         x, y = points['x'], points['y']
         space['pointSpace'][x + 1, y + 1] = points['id']
@@ -103,10 +103,12 @@ def loadPoints():
 ## TODO: Update pheromone data in the space using a define algorithm function as input
 ## TODO: Create a buffer for pheromone updates
 
-
 ### Pheromone Dissipation Logic
 ## TODO: Implement various algorithms for pheromone dissipation
-def linearFade():
+def linearFade(decreaseAmount = 0.1):
+    space['pheromoneSpace'] -= decreaseAmount
+    space['pheromoneSpace'][space['pheromoneSpace' < 0]] = 0
+
     return None
 
 def exponentialFade():

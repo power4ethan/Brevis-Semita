@@ -25,7 +25,9 @@ Simulation.configureTime()
 
 # Configure the amount of simulations to be ran
 
+
 # Configure the visualization(s)
+
 
 # Start simulation loop
     # Load ants from antIDs into space
@@ -34,3 +36,6 @@ Simulation.configureTime()
     # All ants compute, and send likeliness to the simulation 
     # Simulation add pheromones on their previous location (already loaded in space) in space based on likeliness (This could be changed)
     # once antIDs is completely done updating, ants in space are cleared
+def simulationLoop():
+    Simulation.loadAnts()
+    

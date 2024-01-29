@@ -1,12 +1,9 @@
 # BREVIS-SEMITA (Short Path)
 This tool is used for finding the shortest pathway between a set of points in space. The tool utilizes emergent behavior from entities that communicate via chemoreception and operate on a rule-set reflective of their collective goal. 
 
-The codebase utilizes Numpy for the data structures and manipulation. The goal is to keep utlizise the data structures developed with Numpy and alter the codebase's Numpy based functions to operate with Arrayfire for parallelization.
-
 ## Installation
 There are no installation methods other than installing the libraries used:
-- Numpy 1.26.*
-- Arrayfire 3.8.*
+- ArrayFire 3.8.*
 
 ## Running
 There are no instructions for running, this project is incomplete, but actively developed on!
@@ -31,13 +28,11 @@ The file structure depicts this codebase as an application, not a library. This 
 
 ### Points.py
 - Parses points from a file.
-- Generates a list of points from an argmument.
+- Generates a list of points from an argument.
 - Generates a list of random points.
 
 ## Current Development Goals
-- Restructure current code to easily configure in main
-- make the current structures more configurable/flexible
-- Create data structures with Numpy
-- Implement entity behavior with Numpy
-- Integrate Arrayfire with Numpy
-- Optimize Numpy structures
+- Complete pheromone physics.
+- Complete Simulation to Ant communication.
+- Complete Ant behavioral logic.
+- Implement entity behavior using genetic evolution.

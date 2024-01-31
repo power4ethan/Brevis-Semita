@@ -3,7 +3,7 @@ import arrayfire as af
 
 ## ---------------------------------- CONFIGURATION ----------------------------------
 
-## Create High Def Space
+### Create High Def Space
 # X and Y are shifted up and to the right by 1 due to boarders
 def configureSpace(X_RESOLUTION, Y_RESOLUTION):
     ## TODO: Add ability to add layers with configurable dtypes to allow for roads
@@ -29,7 +29,7 @@ def configureSpace(X_RESOLUTION, Y_RESOLUTION):
 
     return space
 
-## Masking function
+### Masking function
 def maskBoarders(xySpace):
         xySpace[0, :] = True
         xySpace[-1, :] = True
@@ -38,7 +38,7 @@ def maskBoarders(xySpace):
 #---------------------------------------------------------------------------------------------
 
 
-## Generate Ant List
+### Generate Ant List
 def configureAnts(ANT_AMOUNT):
     # List of ants with their id, x, y, and angle
     # ID | X | Y | Counterclockwise Rotation factor (0-3)
@@ -56,7 +56,7 @@ def configureAnts(ANT_AMOUNT):
 
     return antIDs
 
-## Initialization of Ant Space and Orientation
+### Initialization of Ant Space and Orientation
 def randomAnts(space, antIDs):
     xResolution = space['antSpace'].dims()[1] - 2
     yResolution = space['antSpace'].dims()[0] - 2
@@ -88,10 +88,9 @@ def configurePoints(pointFunction):
 #---------------------------------------------------------------------------------------------
 
 
-
 ## ---------------------------------- SPATIAL LOADING FUNCTIONS ----------------------------------
 
-## Update antIDs data in the space
+### Update antIDs data in the space
 def loadAnts(space, antIDs):
     # collect size of the arrays
     xResolution = space['antSpace'].dims()[1] - 2
@@ -112,8 +111,10 @@ def loadAnts(space, antIDs):
     space['antSpace'][linearIndices] = antIDs['id']
 
     return space
+#---------------------------------------------------------------------------------------------
 
-## Update pointIDs data in the space
+
+### Update pointIDs data in the space
 def loadPoints(space, pointIDs):
     # collect size of the arrays
     xResolution = space['pointSpace'].dims()[1] - 2
@@ -134,27 +135,23 @@ def loadPoints(space, pointIDs):
     space['pointSpace'][linearIndices] = pointIDs['id']
     
     return space
-
+#---------------------------------------------------------------------------------------------
 
 ## ---------------------------------- PHEROMONE FUNCTIONS ----------------------------------
-## TODO: Update pheromone data in the space using a define algorithm function as input
-## TODO: Create a buffer for pheromone updates
+### Update pheromone data in the space
+
+## TODO: Add pheromone behind the ant after finish
+
+## TODO: Add pheromone dispersion cycle
+
+## TODO: Add pheromone fade cycle
 
 
+## ---------------------------------- ANT FUNCTIONS ----------------------------------
+### Allow for interaction between ants and space
 
-## Road Generation
-## TODO: Add Objects that block and/or can alter movement properties of the ants; akin to roads and buildings.
+## TODO: Run activation on all ants
 
-### Functions for fetching data for ants
+## TODO: Fetch, clip, and orient data for ant
 
-## Return a 3x3x3 segment of spatial data for the ant to utilize
-def getSegment(id, space):
-    # Fetch data from AntIDs
-
-    # Orient the Space with the ant
-
-    # Return the data as the ant would need it 
-    return space[:, x - 1 : x + 1, y - 1 : y + 1]
-
-
-
+## TODO: Move ant in antIDs

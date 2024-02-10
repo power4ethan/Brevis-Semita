@@ -1,3 +1,5 @@
+### Not functional
+
 import Simulation
 import Points
 ## Initialize simulation

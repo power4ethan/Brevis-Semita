@@ -1,157 +1,169 @@
-import Ant
 import arrayfire as af
+import entity
+class Spaces:
+    def __init__(self, xRes, yRes):
+        self.antSpace = af.constant(0, xRes + 2, yRes + 2, dtype=af.Dtype.f32)
+        Spaces.maskBoarders(self.antSpace, -1)
+        self.pheromoneSpace = af.constant(0, xRes + 2, yRes + 2, dtype=af.Dtype.f32)
+        Spaces.maskBoarders(self.pheromoneSpace, -1)
+        self.pointSpace = af.constant(0, xRes + 2, yRes + 2, dtype=af.Dtype.u16)        
+        Spaces.maskBoarders(self.pointSpace, 65535)
+        return None
 
-## ---------------------------------- CONFIGURATION ----------------------------------
 
-### Create High Def Space
-# X and Y are shifted up and to the right by 1 due to boarders
-def configureSpace(X_RESOLUTION, Y_RESOLUTION):
-    ## TODO: Add ability to add layers with configurable dtypes to allow for roads
-    xResolution = X_RESOLUTION
-    yResolution = Y_RESOLUTION
-    # Dimensions with a mask to prevent edge cases within space
-    # Holds Pheromones, Ants, and Points
-    antSpace = af.constant(0, X_RESOLUTION + 2, Y_RESOLUTION + 2, dtype=af.Dtype.u16) # Holds id of ant
-    pointSpace = af.constant(0, X_RESOLUTION + 2, Y_RESOLUTION + 2, dtype=af.Dtype.u16) # Holds id of point
-    pheromoneSpace = af.constant(0, X_RESOLUTION + 2, Y_RESOLUTION + 2, dtype=af.Dtype.f32) # Holds strength of pheromone
+
+    ### Masking function
+    def maskBoarders(xySpace, borderValue):
+        xySpace[0, :] = borderValue
+        xySpace[-1, :] = borderValue
+        xySpace[:, 0] = borderValue
+        xySpace[:, -1] = borderValue
+        return borderValue
+
+
+class Entities:
+    def __init__(self, space, antAmount):
+        self.space = space
+
+        self.id = [entity.entity() for _ in range(antAmount)]
+        self.x = af.constant(0, antAmount, dtype=af.Dtype.u16),
+        self.y = af.constant(0, antAmount, dtype=af.Dtype.u16),
+        self.rotate = af.constant(0, antAmount, dtype=af.Dtype.u8)
+        return None
     
-    # Masking
-    maskBoarders(antSpace)
-    maskBoarders(pointSpace)
-    maskBoarders(pheromoneSpace)
+    def randomAnts(self):
+        xResolution = self.space.antSpace.dims()[1] - 2
+        yResolution = self.space.antSpace.dims()[0] - 2
+
+        self.x = (af.randu(self.x[0].elements(), dtype=af.Dtype.u16) % xResolution).as_type(af.Dtype.u16)
+        self.y = (af.randu(self.y[0].elements(), dtype=af.Dtype.u16) % yResolution).as_type(af.Dtype.u16)
+        self.rotate = (af.randu(self.rotate.elements(), dtype=af.Dtype.u8) % 4).as_type(af.Dtype.u8)
+        return self
     
-    # Embed results to space
-    space = {
-        'antSpace': antSpace, 
-        'pointSpace': pointSpace, 
-        'pheromoneSpace': pheromoneSpace
-    }
+    def loadAnts(self):
+        # collect size of the arrays
+        xResolution = self.space.antSpace.dims()[1] - 2
+        yResolution = self.space.antSpace.dims()[0] - 2
 
-    return space
+        # Reset Space to zero and replace mask
+        self.space.antSpace = af.constant(0, xResolution + 2, yResolution + 2, dtype=af.Dtype.f32)
+        Spaces.maskBoarders(self.space.antSpace, -1)
 
-### Masking function
-def maskBoarders(xySpace):
-        xySpace[0, :] = True
-        xySpace[-1, :] = True
-        xySpace[:, 0] = True
-        xySpace[:, -1] = True
-#---------------------------------------------------------------------------------------------
+        # Adjust coordinates for the boarders
+        xArray = self.x + 1
+        yArray = self.y + 1
+        
+        # Column Major noted, Calculate linear indices
+        indices = af.join(1, xArray, yArray)
+        
 
-
-### Generate Ant List
-def configureAnts(ANT_AMOUNT):
-    # List of ants with their id, x, y, and angle
-    # ID | X | Y | Counterclockwise Rotation factor (0-3)
-    ids = af.iota(ANT_AMOUNT, dtype=af.Dtype.U16)
-    xCoords = af.constant(0, ANT_AMOUNT, dtype=af.Dtype.U16)
-    yCoords = af.constant(0, ANT_AMOUNT, dtype=af.Dtype.U16)
-    rotates = af.constant(0, ANT_AMOUNT, dtype=af.Dtype.u8)
-
-    antIDs = {
-        'id': ids,
-        'x': xCoords,
-        'y': yCoords,
-        'rotate': rotates
-    }
-
-    return antIDs
-
-### Initialization of Ant Space and Orientation
-def randomAnts(space, antIDs):
-    xResolution = space['antSpace'].dims()[1] - 2
-    yResolution = space['antSpace'].dims()[0] - 2
-
-    antIDs['x'] = (af.randu(antIDs['x'].dims(), dtype=af.Dtype.u16) * xResolution).as_type(af.Dtype.u16) + 1
-    antIDs['y'] = (af.randu(antIDs['y'].dims(), dtype=af.Dtype.u16) * yResolution).as_type(af.Dtype.u16) + 1
-    antIDs['rotate'] = (af.randu(antIDs['rotate'].dims(), dtype=af.Dtype.u8) * 4).as_type(af.Dtype.u8)
-
-
-#---------------------------------------------------------------------------------------------
-
-
-### List of Points with their id, x, and y
-def configurePoints(pointFunction):
-    totalPoints = pointFunction.dims()[0]
-    # List of points with their id, x, and y
-    # ID | X | Y
-    ids = af.iota(totalPoints, dtype=af.Dtype.u16)
-    xCoords = pointFunction[:, 1].as_type(af.Dtype.U16)
-    yCoords = pointFunction[:, 0].as_type(af.Dtype.U16)
-
-    pointIDs = {
-        'id': ids,
-        'x': xCoords,
-        'y': yCoords,
-    }
+        # Assign id to linear indices
+        for i in range(xArray.elements()):
+            self.space.antSpace[xArray[i], yArray[i]] = self.id[i].health
+        af.display(self.space.antSpace)
+        return self
     
-    return pointIDs
-#---------------------------------------------------------------------------------------------
+
+    ## ---------------------------------- ANT FUNCTIONS ----------------------------------
+    ### Allow for interaction between ants and space
+
+    ## TODO: Run activation on all ants
+
+    ## TODO: Fetch, clip, and orient data for ant
+
+    ## TODO: Move ant in antIDs
 
 
-## ---------------------------------- SPATIAL LOADING FUNCTIONS ----------------------------------
 
-### Update antIDs data in the space
-def loadAnts(space, antIDs):
-    # collect size of the arrays
-    xResolution = space['antSpace'].dims()[1] - 2
-    yResolution = space['antSpace'].dims()[0] - 2
+class Points:
+    # Recreate Points object if need to alter the points locations 
+    def __init__(self, space, pointFunction):
+        self.space = space
+        totalPoints = pointFunction.dims()[0]
 
-    # Reset Space to zero and replace mask
-    space['antSpace'] = af.constant(0, xResolution + 2, yResolution + 2, dtype=af.Dtype.u16)
-    maskBoarders(space['antSpace'])
-
-    # Adjust coordinates for the boarders
-    xArray = antIDs['x'] + 1
-    yArray = antIDs['y'] + 1
+        # List of points with their id, x, and y
+        # ID | X | Y
+        self.id = af.iota(totalPoints, dtype=af.Dtype.u16)
+        self.x = pointFunction[:, 1].as_type(af.Dtype.u16)
+        self.y =  pointFunction[:, 0].as_type(af.Dtype.u16)
+        return None
     
-    # Column Major noted, Calculate linear indices
-    linearIndices = xArray + yArray * space['antSpace'].dims()[1]
+    # Loads points to the Space
+    def loadPoints(self):
+        # collect size of the arrays
+        xResolution = self.space.pointSpace.dims()[1] - 2
+        yResolution = self.space.pointSpace.dims()[0] - 2
 
-    # Assign id to linear indices
-    space['antSpace'][linearIndices] = antIDs['id']
+        # Reset Space to zero and replace mask
+        self.space.pointSpace = af.constant(0, xResolution + 2, yResolution + 2, dtype=af.Dtype.u16)
+        Spaces.maskBoarders(self.space.pointSpace, 65535)
 
-    return space
-#---------------------------------------------------------------------------------------------
+        # Adjust coordinates for the boarders
+        xArray = self.x + 1
+        yArray = self.y + 1
 
+        # Column Major noted, Calculate linear indices
+        indices = af.join(1, xArray, yArray)
+        
+        # Assign id to linear indices
+        for i in range(xArray.elements()):
+            self.space.pointSpace[xArray[i], yArray[i]] = self.id[i]
+        af.display(self.space.pointSpace)
+        
+        return self.space
 
-### Update pointIDs data in the space
-def loadPoints(space, pointIDs):
-    # collect size of the arrays
-    xResolution = space['pointSpace'].dims()[1] - 2
-    yResolution = space['pointSpace'].dims()[0] - 2
+    # Provides random points for the constructor
+    def randPoints(space, num):
+        # Spatial Bounds
+        yResolution = space.antSpace.dims()[0] - 2
+        xResolution = space.antSpace.dims()[1] - 2
+        
+        # Error Handling
+        if num > xResolution * yResolution:
+            raise ValueError("n exceeds the number of unique points available in the space")
 
-    # Reset Space to zero and replace mask
-    space['pointSpace'] = af.constant(0, xResolution + 2, yResolution + 2, dtype=af.Dtype.u16)
-    maskBoarders(space['pointSpace'])
+        # Sequences of numbers
+        numbersX = af.iota(xResolution, dtype=af.Dtype.u16)
+        numbersY = af.iota(yResolution, dtype=af.Dtype.u16)
 
-    # Adjust coordinates for the boarders
-    xArray = pointIDs['x'] + 1
-    yArray = pointIDs['y'] + 1
+        # Shuffle the sequences' indices
+        xIndices = af.sort(af.randu(xResolution, dtype=af.Dtype.u16))
+        yIndices = af.sort(af.randu(yResolution, dtype=af.Dtype.u16))
 
-    # Column Major noted, Calculate linear indices
-    linearIndices = xArray + yArray * space['pointSpace'].dims()[1]
+        # Fetch sequences with shuffled index
+        shuffledX = af.lookup(numbersX, xIndices, 0)
+        shuffledY = af.lookup(numbersY, yIndices, 0)
+        
+        # Repeat the process if n is larger than x_res or y_res
+        if num > xResolution:
+            shuffledX = af.tile(shuffledX, num // xResolution + 1)[:num]
+        else:
+            shuffledX = shuffledX[:num]
 
-    # Assign id to linear indices
-    space['pointSpace'][linearIndices] = pointIDs['id']
+        if num > yResolution:
+            shuffledY = af.tile(shuffledY, num // yResolution + 1)[:num]
+        else:
+            shuffledY = shuffledY[:num]
+
+        # Combine the x and y coordinates
+        points = af.join(1, shuffledX, shuffledY)
+
+        return points
     
-    return space
-#---------------------------------------------------------------------------------------------
+    # Function to generate a valid set of points from an list via argument
+    def argPoints(pointList):
+        return None
 
+    # Function to generate a valid set of points from a file
+    def filePoints(file):
+        return None
+        # TODO: Add decoding for a file type
+    
 ## ---------------------------------- PHEROMONE FUNCTIONS ----------------------------------
-### Update pheromone data in the space
+    ### Update pheromone data in the space
 
-## TODO: Add pheromone behind the ant after finish
+    ## TODO: Add pheromone behind the ant after finish
 
-## TODO: Add pheromone dispersion cycle
+    ## TODO: Add pheromone dispersion cycle
 
-## TODO: Add pheromone fade cycle
-
-
-## ---------------------------------- ANT FUNCTIONS ----------------------------------
-### Allow for interaction between ants and space
-
-## TODO: Run activation on all ants
-
-## TODO: Fetch, clip, and orient data for ant
-
-## TODO: Move ant in antIDs
+    ## TODO: Add pheromone fade cycle

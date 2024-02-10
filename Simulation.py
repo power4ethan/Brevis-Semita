@@ -62,6 +62,16 @@ class Entities:
             self.space.antSpace[xArray[i], yArray[i]] = self.id[i].health
         af.display(self.space.antSpace)
         return self
+    
+
+    ## ---------------------------------- ANT FUNCTIONS ----------------------------------
+    ### Allow for interaction between ants and space
+
+    ## TODO: Run activation on all ants
+
+    ## TODO: Fetch, clip, and orient data for ant
+
+    ## TODO: Move ant in antIDs
 
 
 
@@ -139,3 +149,21 @@ class Points:
         points = af.join(1, shuffledX, shuffledY)
 
         return points
+    
+    # Function to generate a valid set of points from an list via argument
+    def argPoints(pointList):
+        return None
+
+    # Function to generate a valid set of points from a file
+    def filePoints(file):
+        return None
+        # TODO: Add decoding for a file type
+    
+## ---------------------------------- PHEROMONE FUNCTIONS ----------------------------------
+    ### Update pheromone data in the space
+
+    ## TODO: Add pheromone behind the ant after finish
+
+    ## TODO: Add pheromone dispersion cycle
+
+    ## TODO: Add pheromone fade cycle

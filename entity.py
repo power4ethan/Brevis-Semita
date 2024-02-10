@@ -6,3 +6,8 @@ class entity:
         self.pointsHit = []
         return None
     
+    def getSurroundings():
+        # TODO: Trim down surroundings to fit the 2x3
+        # return trimmedSurroundings
+        return None
+        

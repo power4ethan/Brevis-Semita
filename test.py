@@ -1,6 +1,7 @@
 import simulation
-import entity
 import arrayfire as af
+
+af.set_backend('opencl')
 
 # Configure Space Resolution
 s = simulation.Spaces(10,10)
@@ -15,11 +16,14 @@ p.loadPoints()
 af.display(s.pointSpace)
 
 # Configure entities
-e = simulation.Entities(s, 20)
+e = simulation.Entities(s, 25)
 e.randomAnts() # Randomize ant location + orientation
 af.display(e.x[:])
 af.display(e.y[:])
+af.display(e.rotate[:])
 print(e.id)
 
 # Load Ants into space
 e.loadAnts()
+
+e.runAnts()

@@ -26,8 +26,8 @@ class Entities:
         self.space = space
 
         self.id = [entity.entity() for _ in range(antAmount)]
-        self.x = af.constant(0, antAmount, dtype=af.Dtype.u16),
-        self.y = af.constant(0, antAmount, dtype=af.Dtype.u16),
+        self.x = af.constant(0, antAmount, dtype=af.Dtype.u16)
+        self.y = af.constant(0, antAmount, dtype=af.Dtype.u16)
         self.rotate = af.constant(0, antAmount, dtype=af.Dtype.u8)
         return None
     
@@ -35,8 +35,8 @@ class Entities:
         xResolution = self.space.antSpace.dims()[1] - 2
         yResolution = self.space.antSpace.dims()[0] - 2
 
-        self.x = (af.randu(self.x[0].elements(), dtype=af.Dtype.u16) % xResolution).as_type(af.Dtype.u16)
-        self.y = (af.randu(self.y[0].elements(), dtype=af.Dtype.u16) % yResolution).as_type(af.Dtype.u16)
+        self.x = (af.randu(self.x.elements(), dtype=af.Dtype.u16) % xResolution).as_type(af.Dtype.u16)
+        self.y = (af.randu(self.y.elements(), dtype=af.Dtype.u16) % yResolution).as_type(af.Dtype.u16)
         self.rotate = (af.randu(self.rotate.elements(), dtype=af.Dtype.u8) % 4).as_type(af.Dtype.u8)
         return self
     
@@ -68,8 +68,46 @@ class Entities:
     ### Allow for interaction between ants and space
 
     ## TODO: Run activation on all ants
+    def runAnts(self):
+        for i in range(self.x.elements()):
+            self.fetchData(i)
+        return True
 
     ## TODO: Fetch, clip, and orient data for ant
+    def fetchData(self, index):
+        # Hold Space Data for manipulation
+        print(self.x[index].scalar())
+        xStart = int(self.x[index].scalar())
+        xEnd = int(self.x[index].scalar()) + 3
+        yStart = int(self.y[index].scalar()) 
+        yEnd = int(self.y[index].scalar()) + 3
+
+        pointsData = self.space.pointSpace[xStart : xEnd, yStart : yEnd]
+        pheromoneData = self.space.pheromoneSpace[xStart : xEnd, yStart: yEnd]
+        antData = self.space.antSpace[xStart : xEnd, yStart: yEnd]
+        
+        match (self.rotate[index].scalar()):
+            case 0: # Facing North
+                self.id[index].visionPoints = pointsData
+                self.id[index].visionPheromone = pheromoneData
+                self.id[index].visionAnts = antData
+            case 1: # Facing East
+                self.id[index].visionPoints = af.flip(af.transpose(pointsData), 0)
+                self.id[index].visionPheromone = af.flip(af.transpose(pheromoneData), 0)
+                self.id[index].visionAnts = af.flip(af.transpose(antData), 0)
+            case 2: # Facing South
+                self.id[index].visionPoints = af.flip(af.flip(pointsData, 0), 1)
+                self.id[index].visionPheromone = af.flip(af.flip(pheromoneData,0), 1)
+                self.id[index].visionAnts = af.flip(af.flip(antData, 0), 1)
+            case 3: # Facing West
+                self.id[index].visionPoints = af.flip(af.transpose(pointsData), 1)
+                self.id[index].visionPheromone = af.flip(af.transpose(pheromoneData), 1)
+                self.id[index].visionAnts = af.flip(af.transpose(antData), 1)
+        af.display(self.x[index])
+        af.display(self.y[index])
+        af.display(self.rotate[index])
+        af.display(self.id[index].visionAnts)
+
 
     ## TODO: Move ant in antIDs
 
@@ -85,7 +123,7 @@ class Points:
         # ID | X | Y
         self.id = af.iota(totalPoints, dtype=af.Dtype.u16)
         self.x = pointFunction[:, 1].as_type(af.Dtype.u16)
-        self.y =  pointFunction[:, 0].as_type(af.Dtype.u16)
+        self.y = pointFunction[:, 0].as_type(af.Dtype.u16)
         return None
     
     # Loads points to the Space
